@@ -1,18 +1,20 @@
 const axios = require('axios')
 const obj = {}
 let fs = require('fs');
+let totalPokemons = ''
 async function fetchPokemons() {
 
     const responseToLength = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/`)
-    const totalPokemons = responseToLength.data.count
+    totalPokemons = responseToLength.data.count
 
     for (number = 1; number <= totalPokemons; number++) {
 
-        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${number}`)
+        const responseFrench = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${number}`)
+        const responseEnglish = await axios.get(`https://pokeapi.co/api/v2/pokemon/${number}`)
 
         let french = ''
-        let english = response.data.name
-        for (const index of response.data.names) {
+        let english = responseEnglish.data.name
+        for (const index of responseFrench.data.names) {
             if (index.language.name === 'fr')
                 french = index.name
         }
@@ -32,15 +34,15 @@ setTimeout(() => {
         if (totalPokemons === Object.keys(obj).length) {
             console.log(`================`);
             console.log(` `);
-            console.log(` <---- Congratulations, you have just obtained the complete list of pokemons ---->`);
+            console.log(` <---- Félicitations vous avez bien récupéré la totalité des noms de pokémons (${totalPokemons}). ---->`);
             console.log(` `);
             console.log(`================`);
         }
         else {
             console.log(` `);
-            console.log(`/!\\ unfortunately an error has occurred somewhere, you have not retrieved the complete list of pokemons /!\\`);
+            console.log(`/!\\ Malheureusement une erreur s'est produite, votre liste n'est pas complete (${Object.keys(obj).length}/${totalPokemons} /!\\`);
             console.log(` `);
         }
     }
     );
-}, 50000)
+}, 500000)
